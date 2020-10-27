@@ -6,11 +6,13 @@
 package trihk.hotelbooking.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import trihk.hotelbooking.entity.BookingDetails;
+import static trihk.hotelbooking.entity.BookingDetails_.orderId;
 import trihk.hotelbooking.helper.DBHelper;
 
 /**
@@ -84,6 +86,24 @@ public class BookingDetailsDAO {
     }
 
     public List<BookingDetails> getListBookingDetailsByOrderId(int orderId) {
+        List<BookingDetails> list = new ArrayList<>();
+        EntityManager em = DBHelper.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            list = em.createNamedQuery("BookingDetails.findByOrderId")
+                    .setParameter("id", orderId)
+                    .getResultList();
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", e);
+            em.getTransaction().rollback();
+        } finally {
+            em.close();
+        }
+        return list;
+    }
+
+    public List<BookingDetails> getListBookingDetailsInPeriod(Date checkin, Date checkout) {
         List<BookingDetails> list = new ArrayList<>();
         EntityManager em = DBHelper.getEntityManager();
         try {

@@ -32,8 +32,7 @@
                             <label for="area">Where are you going?</label>
                             <c:set value="${requestScope.LIST_AREA}" var="areas"/>
                             <c:if test="${not empty areas}">
-                                <select name="area" class="form-control" id="area">
-                                    <option value="0">Select ...</option>
+                                <select name="area" class="form-control" id="area" required="true"> 
                                     <c:forEach items="${areas}" var="a">
                                         <option value="${a.id}" 
                                                 <c:if test="${requestScope.AREA == a.id}"> selected="true"</c:if>>
@@ -45,22 +44,21 @@
                         </div>
                         <div class="col-md-3">
                             <label for="checkin">Check-in Date:</label>
-                            <input class="form-control" type="date" id="checkin"  
+                            <input class="form-control" type="date" id="checkin" required="true"  
                                    name="checkin"
-                                   value="<fmt:formatDate pattern="yyyy-MM-dd" value="${requestScope.CK_IN_DATE}" />" />
+                                   value="${requestScope.CK_IN_DATE}" />
                         </div>
                         <div class="col-md-3">
                             <label for="checkout">Check-out Date:</label>
-                            <input class="form-control" type="date" id="checkout"  
+                            <input class="form-control" type="date" id="checkout" required="true" 
                                    name="checkout"
-                                   value="<fmt:formatDate pattern="yyyy-MM-dd" value="${requestScope.CK_OUT_DATE}" />" />
+                                   value="${requestScope.CK_OUT_DATE}" />
                         </div>
                         <div class="col-md-3">
                             <label for="type">Room type:</label>
                             <c:set value="${requestScope.LIST_ROOM_TYPE}" var="types"/>
                             <c:if test="${not empty types}">
-                                <select name="type" class="form-control" id="type">
-                                    <option value="0">Select ...</option>
+                                <select name="type" class="form-control" id="type" required="true">
                                     <c:forEach items="${types}" var="type">
                                         <option value="${type.id}" 
                                                 <c:if test="${requestScope.ROOM_TYPE == type.id}"> selected="true"</c:if>>

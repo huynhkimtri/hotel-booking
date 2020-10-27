@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Hotel.findAll", query = "SELECT h FROM Hotel h"),
     @NamedQuery(name = "Hotel.findById", query = "SELECT h FROM Hotel h WHERE h.id = :id"),
+    @NamedQuery(name = "Hotel.findByArea", query = "SELECT h FROM Hotel h WHERE h.areaId.id = :id"),
     @NamedQuery(name = "Hotel.findByName", query = "SELECT h FROM Hotel h WHERE h.name = :name"),
     @NamedQuery(name = "Hotel.findByImageUrl", query = "SELECT h FROM Hotel h WHERE h.imageUrl = :imageUrl"),
     @NamedQuery(name = "Hotel.findByDescription", query = "SELECT h FROM Hotel h WHERE h.description = :description")})
@@ -135,5 +136,5 @@ public class Hotel implements Serializable {
     public String toString() {
         return "trihk.hotelbooking.entity.Hotel[ id=" + id + " ]";
     }
-    
+
 }
