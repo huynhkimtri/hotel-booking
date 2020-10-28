@@ -43,12 +43,12 @@ public class SearchController extends HttpServlet {
             String area = request.getParameter("area");
             String checkinDate = request.getParameter("checkin");
             String checkoutDate = request.getParameter("checkout");
-            String type = request.getParameter("type");
-            int typeId, areaId;
+            String amountNum = request.getParameter("amount");
+            int amount, areaId;
             try {
-                typeId = Integer.parseInt(type.trim());
+                amount = Integer.parseInt(amountNum.trim());
             } catch (NumberFormatException e) {
-                typeId = 0;
+                amount = 0;
             }
             try {
                 areaId = Integer.parseInt(area.trim());
@@ -56,21 +56,16 @@ public class SearchController extends HttpServlet {
                 areaId = 0;
             }
 
-            RoomService roomService = new RoomService();
-            List<RoomType> listRoomTypes = roomService.getListRoomType();
-
             HotelService hotelService = new HotelService();
             List<HotelArea> listAreas = hotelService.getListHotelArea();
 
-            List<Hotel> listHotel = hotelService.getListHotelsWithAvailableRoom(areaId, checkinDate, checkoutDate, typeId);
-
+            List<Hotel> listHotel = hotelService.getHotelsWithAvailableHotelRoom(areaId, checkinDate, checkoutDate, amount);
             request.setAttribute("LIST_HOTEL", listHotel);
-            request.setAttribute("LIST_ROOM_TYPE", listRoomTypes);
             request.setAttribute("LIST_AREA", listAreas);
             request.setAttribute("AREA", areaId);
             request.setAttribute("CK_IN_DATE", checkinDate);
             request.setAttribute("CK_OUT_DATE", checkoutDate);
-            request.setAttribute("ROOM_TYPE", typeId);
+            request.setAttribute("AMOUNT", amount);
         } catch (NumberFormatException e) {
             // TODO
         } finally {

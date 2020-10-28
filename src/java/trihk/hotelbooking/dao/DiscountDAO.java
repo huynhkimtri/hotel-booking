@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import trihk.hotelbooking.entity.Discount;
 import trihk.hotelbooking.helper.DBHelper;
 
@@ -54,4 +55,28 @@ public class DiscountDAO {
         return discount;
     }
 
+    public Discount getDiscountByCode(String code) {
+        EntityManager em = DBHelper.getEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            List<Discount> discounts = em.createNamedQuery("Discount.findByCode")
+                    .setParameter("code", code)
+                    .getResultList();
+
+            em.getTransaction().commit();
+
+            if (!discounts.isEmpty()) {
+                return discounts.get(0);
+            }
+        } catch (Exception e) {
+            Logger.getLogger(HotelDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+
+        return null;
+    }
 }

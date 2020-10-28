@@ -32,10 +32,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "BookingDetails.findAll", query = "SELECT b FROM BookingDetails b"),
     @NamedQuery(name = "BookingDetails.findById", query = "SELECT b FROM BookingDetails b WHERE b.id = :id"),
-    @NamedQuery(name = "BookingDetails.findByQuantity", query = "SELECT b FROM BookingDetails b WHERE b.quantity = :quantity"),
-    @NamedQuery(name = "BookingDetails.findBySinglePrice", query = "SELECT b FROM BookingDetails b WHERE b.singlePrice = :singlePrice"),
-    @NamedQuery(name = "BookingDetails.findByCreateDate", query = "SELECT b FROM BookingDetails b WHERE b.createDate = :createDate"),
-    @NamedQuery(name = "BookingDetails.findByUpdateDate", query = "SELECT b FROM BookingDetails b WHERE b.updateDate = :updateDate")})
+    @NamedQuery(name = "BookingDetails.findByAmount", query = "SELECT b FROM BookingDetails b WHERE b.amount = :amount"),
+    @NamedQuery(name = "BookingDetails.findByUnitPrice", query = "SELECT b FROM BookingDetails b WHERE b.unitPrice = :unitPrice"),
+    @NamedQuery(name = "BookingDetails.findByPeriod", query = "SELECT t FROM BookingDetails t WHERE t.checkinDate <= :endDate AND t.checkoutDate >= :startDate"),
+    @NamedQuery(name = "BookingDetails.findRoomInPeriod", query = "SELECT t FROM BookingDetails t WHERE t.checkinDate <= :endDate AND t.checkoutDate >= :startDate AND t.roomId = :roomId"),
+    @NamedQuery(name = "BookingDetails.findByCheckinDate", query = "SELECT b FROM BookingDetails b WHERE b.checkinDate = :checkinDate"),
+    @NamedQuery(name = "BookingDetails.findByCheckoutDate", query = "SELECT b FROM BookingDetails b WHERE b.checkoutDate = :checkoutDate"),
+    @NamedQuery(name = "BookingDetails.findByCreateDate", query = "SELECT b FROM BookingDetails b WHERE b.createDate = :createDate")})
 public class BookingDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,21 +48,24 @@ public class BookingDetails implements Serializable {
     @Column(name = "id", nullable = false)
     private Integer id;
     @Basic(optional = false)
-    @Column(name = "quantity", nullable = false)
-    private int quantity;
+    @Column(name = "amount", nullable = false)
+    private int amount;
     @Basic(optional = false)
-    @Column(name = "single_price", nullable = false)
-    private int singlePrice;
+    @Column(name = "unit_price", nullable = false)
+    private int unitPrice;
+    @Column(name = "checkin_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date checkinDate;
+    @Column(name = "checkout_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date checkoutDate;
     @Basic(optional = false)
     @Column(name = "create_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
-    @Column(name = "update_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updateDate;
-    @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "booking_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false)
-    private Booking orderId;
+    private Booking bookingId;
     @JoinColumn(name = "room_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false)
     private HotelRoom roomId;
@@ -71,10 +77,10 @@ public class BookingDetails implements Serializable {
         this.id = id;
     }
 
-    public BookingDetails(Integer id, int quantity, int singlePrice, Date createDate) {
+    public BookingDetails(Integer id, int amount, int unitPrice, Date createDate) {
         this.id = id;
-        this.quantity = quantity;
-        this.singlePrice = singlePrice;
+        this.amount = amount;
+        this.unitPrice = unitPrice;
         this.createDate = createDate;
     }
 
@@ -86,20 +92,36 @@ public class BookingDetails implements Serializable {
         this.id = id;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getAmount() {
+        return amount;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
-    public int getSinglePrice() {
-        return singlePrice;
+    public int getUnitPrice() {
+        return unitPrice;
     }
 
-    public void setSinglePrice(int singlePrice) {
-        this.singlePrice = singlePrice;
+    public void setUnitPrice(int unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public Date getCheckinDate() {
+        return checkinDate;
+    }
+
+    public void setCheckinDate(Date checkinDate) {
+        this.checkinDate = checkinDate;
+    }
+
+    public Date getCheckoutDate() {
+        return checkoutDate;
+    }
+
+    public void setCheckoutDate(Date checkoutDate) {
+        this.checkoutDate = checkoutDate;
     }
 
     public Date getCreateDate() {
@@ -110,20 +132,12 @@ public class BookingDetails implements Serializable {
         this.createDate = createDate;
     }
 
-    public Date getUpdateDate() {
-        return updateDate;
+    public Booking getBookingId() {
+        return bookingId;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public Booking getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Booking orderId) {
-        this.orderId = orderId;
+    public void setBookingId(Booking bookingId) {
+        this.bookingId = bookingId;
     }
 
     public HotelRoom getRoomId() {
@@ -158,5 +172,5 @@ public class BookingDetails implements Serializable {
     public String toString() {
         return "trihk.hotelbooking.entity.BookingDetails[ id=" + id + " ]";
     }
-    
+
 }

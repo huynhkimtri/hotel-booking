@@ -36,11 +36,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Booking.findAll", query = "SELECT b FROM Booking b"),
     @NamedQuery(name = "Booking.findById", query = "SELECT b FROM Booking b WHERE b.id = :id"),
-    @NamedQuery(name = "Booking.findByUserEmail", query = "SELECT b FROM Booking b WHERE b.userEmail.email = :email"),
-    @NamedQuery(name = "Booking.findByAmount", query = "SELECT b FROM Booking b WHERE b.amount = :amount"),
     @NamedQuery(name = "Booking.findByStatusId", query = "SELECT b FROM Booking b WHERE b.statusId = :statusId"),
     @NamedQuery(name = "Booking.findByCreateDate", query = "SELECT b FROM Booking b WHERE b.createDate = :createDate"),
-    @NamedQuery(name = "Booking.findByUpdateDate", query = "SELECT b FROM Booking b WHERE b.updateDate = :updateDate"),
     @NamedQuery(name = "Booking.findByDiscountPercent", query = "SELECT b FROM Booking b WHERE b.discountPercent = :discountPercent")})
 public class Booking implements Serializable {
 
@@ -50,24 +47,17 @@ public class Booking implements Serializable {
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
     private Integer id;
-    @Basic(optional = false)
-    @Column(name = "amount", nullable = false)
-    private int amount;
     @Column(name = "status_id")
     private Integer statusId;
-    @Basic(optional = false)
-    @Column(name = "create_date", nullable = false)
+    @Column(name = "create_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
-    @Column(name = "update_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updateDate;
     @Column(name = "discount_percent")
     private Integer discountPercent;
     @JoinColumn(name = "user_email", referencedColumnName = "email")
     @ManyToOne
-    private Account userEmail;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "orderId")
+    private User userEmail;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bookingId")
     private Collection<BookingDetails> bookingDetailsCollection;
 
     public Booking() {
@@ -77,26 +67,12 @@ public class Booking implements Serializable {
         this.id = id;
     }
 
-    public Booking(Integer id, int amount, Date createDate) {
-        this.id = id;
-        this.amount = amount;
-        this.createDate = createDate;
-    }
-
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
     }
 
     public Integer getStatusId() {
@@ -115,14 +91,6 @@ public class Booking implements Serializable {
         this.createDate = createDate;
     }
 
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
     public Integer getDiscountPercent() {
         return discountPercent;
     }
@@ -131,11 +99,11 @@ public class Booking implements Serializable {
         this.discountPercent = discountPercent;
     }
 
-    public Account getUserEmail() {
+    public User getUserEmail() {
         return userEmail;
     }
 
-    public void setUserEmail(Account userEmail) {
+    public void setUserEmail(User userEmail) {
         this.userEmail = userEmail;
     }
 
@@ -172,5 +140,5 @@ public class Booking implements Serializable {
     public String toString() {
         return "trihk.hotelbooking.entity.Booking[ id=" + id + " ]";
     }
-
+    
 }

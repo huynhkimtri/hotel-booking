@@ -5,10 +5,16 @@
  */
 package trihk.hotelbooking.service;
 
-import java.util.List;
-import trihk.hotelbooking.bean.BookingCartBean;
-import trihk.hotelbooking.bean.BookingCartItemBean;
-import trihk.hotelbooking.entity.HotelRoom;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import javax.servlet.http.HttpSession;
+import trihk.hotelbooking.dao.BookingDAO;
+import trihk.hotelbooking.dao.DiscountDAO;
+import trihk.hotelbooking.entity.Booking;
+import trihk.hotelbooking.entity.BookingDetails;
+import trihk.hotelbooking.entity.Discount;
 
 /**
  *
@@ -16,59 +22,78 @@ import trihk.hotelbooking.entity.HotelRoom;
  */
 public class CartService {
 
-    public BookingCartBean addItemToCart(BookingCartItemBean item, BookingCartBean cart) {
-        if (cart == null) {
-            cart = new BookingCartBean();
-        }
-        cart.addItem(item);
-        return cart;
+    private final HttpSession session;
+
+    public CartService(HttpSession session) {
+        this.session = session;
     }
 
-    public BookingCartBean addItemToCart(int itemId, BookingCartBean cart) {
-        if (cart == null) {
-            cart = new BookingCartBean();
+    public boolean addRoomToCart(BookingDetails detail) {
+        if (!this.ensureCartExist()) {
+            return false;
         }
-        BookingCartItemBean item = new BookingCartItemBean();
-        RoomService service = new RoomService();
-        HotelRoom room = service.getOne(itemId);
-        item.setId(itemId);
-        item.setPrice(room.getPrice());
-        cart.addItem(item);
-        return cart;
-    }
 
-    public BookingCartBean removeItemFromCart(BookingCartItemBean item, BookingCartBean cart) {
-        if (cart != null) {
-            cart.removeItem(item);
-        }
-        return cart;
-    }
+        Booking cart = this.getCart();
 
-    public BookingCartBean removeItemFromCart(int itemId, BookingCartBean cart) {
-        if (cart != null) {
-            BookingCartItemBean item = new BookingCartItemBean();
-            item.setId(itemId);
-            cart.removeItem(item);
-        }
-        return cart;
-    }
-
-    public BookingCartBean updateItemFromCart(int itemId, BookingCartBean cart, int quantity) {
-        if (cart != null) {
-            BookingCartItemBean item = new BookingCartItemBean();
-            item.setId(itemId);
-            cart.updateItem(item, quantity);
-        }
-        return cart;
-    }
-
-    public BookingCartBean removeItemsFromCart(BookingCartBean cart, List<BookingCartItemBean> items) {
-        if (cart != null) {
-            int size = items.size();
-            for (int i = 0; i < size; i++) {
-                cart.removeItem(items.get(i));
+        boolean isFound = false;
+        for (BookingDetails d : cart.getBookingDetailsCollection()) {
+            if (Objects.equals(d.getRoomId().getId(), detail.getRoomId().getId())) {
+                d.setAmount(d.getAmount() + detail.getAmount());
+                isFound = true;
+                break;
             }
         }
+
+        if (!isFound) {
+            detail.setBookingId(cart);
+            cart.getBookingDetailsCollection().add(detail);
+        }
+        return true;
+    }
+
+    public Booking getCart() {
+        if (session == null) {
+            return null;
+        }
+        Booking cart = (Booking) session.getAttribute("CART");
         return cart;
+    }
+
+    public boolean ensureCartExist() {
+        if (session == null) {
+            return false;
+        }
+        Booking cart = this.getCart();
+        if (cart == null) {
+            cart = new Booking();
+            cart.setBookingDetailsCollection(new ArrayList<>());
+            this.setCart(cart);
+        }
+        return true;
+    }
+
+    public boolean setCart(Booking cart) {
+        if (session == null) {
+            return false;
+        }
+        session.setAttribute("CART", cart);
+        return true;
+    }
+
+    public boolean saveCart(String discountCode) {
+        DiscountDAO discountDAO = new DiscountDAO();
+        Discount discount = discountDAO.getDiscountByCode(discountCode);
+
+        Booking cart = this.getCart();
+        if (discount != null) {
+            cart.setDiscountPercent(discount.getDiscountPercent());
+        }
+
+        cart.setCreateDate(Date.from(Instant.now()));
+
+        BookingDAO bookingDAO = new BookingDAO();
+        Booking result = bookingDAO.insert(cart);
+
+        return result != null;
     }
 }

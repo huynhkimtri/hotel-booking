@@ -5,10 +5,12 @@
  */
 package trihk.hotelbooking.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import trihk.hotelbooking.entity.Hotel;
 import trihk.hotelbooking.helper.DBHelper;
 
@@ -94,6 +96,99 @@ public class HotelDAO {
             em.close();
         }
         return list;
+    }
+
+    public List<Hotel> getAllHotels() {
+        EntityManager em = DBHelper.getEntityManager();
+        try {
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+
+            List<Hotel> hotels = em.createNamedQuery("Hotel.findAll")
+                    .getResultList();
+
+            transaction.commit();
+            return hotels;
+        } catch (Exception e) {
+            Logger.getLogger(HotelDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+
+        return new ArrayList<>();
+    }
+
+    public List<Hotel> getAllHotels(String name, String location) {
+        EntityManager em = DBHelper.getEntityManager();
+        try {
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+
+            List<Hotel> hotels = em.createNamedQuery("Hotel.findAllWith")
+                    .setParameter("name", "%" + name + "%")
+                    .setParameter("location", "%" + location + "%")
+                    .getResultList();
+
+            transaction.commit();
+            return hotels;
+        } catch (Exception e) {
+            Logger.getLogger(HotelDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+
+        return new ArrayList<>();
+    }
+
+    public List<Hotel> getAllHotels(String name, int areaId) {
+        EntityManager em = DBHelper.getEntityManager();
+        try {
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+
+            List<Hotel> hotels = em.createNamedQuery("Hotel.findAllWith")
+                    .setParameter("name", "%" + name + "%")
+                    .setParameter("areaId", areaId)
+                    .getResultList();
+
+            transaction.commit();
+            return hotels;
+        } catch (Exception e) {
+            Logger.getLogger(HotelDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+
+        return new ArrayList<>();
+    }
+
+    public List<Hotel> getAllHotels(int areaId) {
+        EntityManager em = DBHelper.getEntityManager();
+        try {
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+
+            List<Hotel> hotels = em.createNamedQuery("Hotel.findByAreaId")
+                    .setParameter("areaId", areaId)
+                    .getResultList();
+
+            transaction.commit();
+            return hotels;
+        } catch (Exception e) {
+            Logger.getLogger(HotelDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+
+        return new ArrayList<>();
     }
 
 }

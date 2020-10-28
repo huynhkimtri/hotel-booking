@@ -15,9 +15,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import trihk.hotelbooking.entity.Account;
+import trihk.hotelbooking.entity.User;
 import trihk.hotelbooking.helper.Constants;
-import trihk.hotelbooking.service.AccountService;
+import trihk.hotelbooking.service.UserService;
 
 /**
  *
@@ -48,8 +48,8 @@ public class SignInController extends HttpServlet {
         try {
             String username = request.getParameter("username");
             String password = request.getParameter("password");
-            AccountService service = new AccountService();
-            Account account = service.signIn(username, password);
+            UserService service = new UserService();
+            User account = service.signIn(username, password);
             if (account != null) {
                 if (account.getIsActive()) {
                     HttpSession session = request.getSession();

@@ -41,13 +41,9 @@ public class HomeController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String path = homePage;
         try {
-            RoomService roomService = new RoomService();
-            List<RoomType> listRoomTypes = roomService.getListRoomType();
-
             HotelService hotelService = new HotelService();
             List<HotelArea> listAreas = hotelService.getListHotelArea();
 
-            request.setAttribute("LIST_ROOM_TYPE", listRoomTypes);
             request.setAttribute("LIST_AREA", listAreas);
 
         } catch (Exception e) {

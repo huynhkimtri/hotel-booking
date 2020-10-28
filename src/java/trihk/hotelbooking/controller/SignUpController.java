@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import trihk.hotelbooking.entity.Account;
+import trihk.hotelbooking.entity.User;
 import trihk.hotelbooking.helper.Constants;
-import trihk.hotelbooking.service.AccountService;
+import trihk.hotelbooking.service.UserService;
 
 /**
  *
@@ -52,9 +52,9 @@ public class SignUpController extends HttpServlet {
             String phone = request.getParameter("phone");
             String fullName = request.getParameter("fullName");
             if (password.equals(confirmPassword)) {
-                AccountService service = new AccountService();
-                Account account = service.signUp(new Account(username, password,
-                        fullName, phone, true, new Date()), customerRole);
+                UserService service = new UserService();
+                User account = service.signUp(new User(username, password,
+                        fullName, phone, Boolean.TRUE), customerRole);
                 if (account != null) {
                     HttpSession session = request.getSession();
                     session.setAttribute("USER", account);

@@ -32,10 +32,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Hotel.findAll", query = "SELECT h FROM Hotel h"),
     @NamedQuery(name = "Hotel.findById", query = "SELECT h FROM Hotel h WHERE h.id = :id"),
-    @NamedQuery(name = "Hotel.findByArea", query = "SELECT h FROM Hotel h WHERE h.areaId.id = :id"),
+    @NamedQuery(name = "Hotel.findAllWith", query = "SELECT h FROM Hotel h WHERE h.name LIKE :name AND h.areaId.id = :areaId"),
+    @NamedQuery(name = "Hotel.findByAreaId", query = "SELECT h FROM Hotel h WHERE h.areaId.id = :areaId"),
     @NamedQuery(name = "Hotel.findByName", query = "SELECT h FROM Hotel h WHERE h.name = :name"),
-    @NamedQuery(name = "Hotel.findByImageUrl", query = "SELECT h FROM Hotel h WHERE h.imageUrl = :imageUrl"),
-    @NamedQuery(name = "Hotel.findByDescription", query = "SELECT h FROM Hotel h WHERE h.description = :description")})
+    @NamedQuery(name = "Hotel.findByImageUrl", query = "SELECT h FROM Hotel h WHERE h.imageUrl = :imageUrl")})
 public class Hotel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,10 +46,8 @@ public class Hotel implements Serializable {
     private Integer id;
     @Column(name = "name", length = 50)
     private String name;
-    @Column(name = "imageUrl", length = 2147483647)
+    @Column(name = "image_url", length = 2147483647)
     private String imageUrl;
-    @Column(name = "description", length = 2147483647)
-    private String description;
     @JoinColumn(name = "area_id", referencedColumnName = "id")
     @ManyToOne
     private HotelArea areaId;
@@ -85,14 +83,6 @@ public class Hotel implements Serializable {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public HotelArea getAreaId() {

@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "HotelArea.findAll", query = "SELECT h FROM HotelArea h"),
     @NamedQuery(name = "HotelArea.findById", query = "SELECT h FROM HotelArea h WHERE h.id = :id"),
-    @NamedQuery(name = "HotelArea.findByName", query = "SELECT h FROM HotelArea h WHERE h.name = :name")})
+    @NamedQuery(name = "HotelArea.findByLocation", query = "SELECT h FROM HotelArea h WHERE h.location = :location")})
 public class HotelArea implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -36,8 +36,8 @@ public class HotelArea implements Serializable {
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
     private Integer id;
-    @Column(name = "name", length = 50)
-    private String name;
+    @Column(name = "location", length = 50)
+    private String location;
     @OneToMany(mappedBy = "areaId")
     private Collection<Hotel> hotelCollection;
 
@@ -56,12 +56,12 @@ public class HotelArea implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getLocation() {
+        return location;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     @XmlTransient

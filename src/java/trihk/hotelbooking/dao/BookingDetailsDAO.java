@@ -11,8 +11,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import trihk.hotelbooking.entity.BookingDetails;
-import static trihk.hotelbooking.entity.BookingDetails_.orderId;
+import trihk.hotelbooking.entity.HotelRoom;
 import trihk.hotelbooking.helper.DBHelper;
 
 /**
@@ -103,21 +104,52 @@ public class BookingDetailsDAO {
         return list;
     }
 
-    public List<BookingDetails> getListBookingDetailsInPeriod(Date checkin, Date checkout) {
-        List<BookingDetails> list = new ArrayList<>();
+    public List<BookingDetails> getBookingDetailsInPeriod(Date start, Date end) {
         EntityManager em = DBHelper.getEntityManager();
         try {
-            em.getTransaction().begin();
-            list = em.createNamedQuery("BookingDetails.findByOrderId")
-                    .setParameter("id", orderId)
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+
+            List<BookingDetails> details = em.createNamedQuery("BookingDetails.findByPeriod")
+                    .setParameter("startDate", start)
+                    .setParameter("endDate", end)
                     .getResultList();
-            em.getTransaction().commit();
+
+            transaction.commit();
+            return details;
         } catch (Exception e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", e);
-            em.getTransaction().rollback();
+            Logger.getLogger(BookingDetailsDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
-        return list;
+
+        return new ArrayList<>();
+    }
+
+    public List<BookingDetails> getRoomBookingDetailsInPeriod(HotelRoom roomId, Date start, Date end) {
+        EntityManager em = DBHelper.getEntityManager();
+        try {
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+
+            List<BookingDetails> details = em.createNamedQuery("BookingDetails.findRoomInPeriod")
+                    .setParameter("startDate", start)
+                    .setParameter("endDate", end)
+                    .setParameter("roomId", roomId)
+                    .getResultList();
+
+            transaction.commit();
+            return details;
+        } catch (Exception e) {
+            Logger.getLogger(BookingDetailsDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+
+        return new ArrayList<>();
     }
 }

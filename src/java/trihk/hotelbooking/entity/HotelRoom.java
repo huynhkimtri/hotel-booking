@@ -6,9 +6,7 @@
 package trihk.hotelbooking.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,10 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -33,8 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "HotelRoom.findAll", query = "SELECT h FROM HotelRoom h"),
     @NamedQuery(name = "HotelRoom.findById", query = "SELECT h FROM HotelRoom h WHERE h.id = :id"),
-    @NamedQuery(name = "HotelRoom.findByPrice", query = "SELECT h FROM HotelRoom h WHERE h.price = :price"),
-    @NamedQuery(name = "HotelRoom.findByIsAvailable", query = "SELECT h FROM HotelRoom h WHERE h.isAvailable = :isAvailable")})
+    @NamedQuery(name = "HotelRoom.findByAmount", query = "SELECT h FROM HotelRoom h WHERE h.amount = :amount")})
 public class HotelRoom implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -43,12 +38,8 @@ public class HotelRoom implements Serializable {
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
     private Integer id;
-    @Column(name = "price")
-    private Integer price;
-    @Column(name = "is_available")
-    private Boolean isAvailable;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "roomId")
-    private Collection<BookingDetails> bookingDetailsCollection;
+    @Column(name = "amount")
+    private Integer amount;
     @JoinColumn(name = "hotel_id", referencedColumnName = "id")
     @ManyToOne
     private Hotel hotelId;
@@ -71,29 +62,12 @@ public class HotelRoom implements Serializable {
         this.id = id;
     }
 
-    public Integer getPrice() {
-        return price;
+    public Integer getAmount() {
+        return amount;
     }
 
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
-
-    public Boolean getIsAvailable() {
-        return isAvailable;
-    }
-
-    public void setIsAvailable(Boolean isAvailable) {
-        this.isAvailable = isAvailable;
-    }
-
-    @XmlTransient
-    public Collection<BookingDetails> getBookingDetailsCollection() {
-        return bookingDetailsCollection;
-    }
-
-    public void setBookingDetailsCollection(Collection<BookingDetails> bookingDetailsCollection) {
-        this.bookingDetailsCollection = bookingDetailsCollection;
+    public void setAmount(Integer amount) {
+        this.amount = amount;
     }
 
     public Hotel getHotelId() {
